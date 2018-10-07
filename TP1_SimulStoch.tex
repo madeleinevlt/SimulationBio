@@ -1,0 +1,1020 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={R Notebook},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{R Notebook}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{}
+    \preauthor{}\postauthor{}
+    \date{}
+    \predate{}\postdate{}
+  
+
+\begin{document}
+\maketitle
+
+\#EXERCICE 2:
+
+Fonction à intégrer : Paramètres de chaques estimateurs (méthode,
+technique d'échantillonnage, nombre de points et tout ce que vous
+jugerez nécessaire)
+
+\#\#2.1 Création des différentes fonctions: \#\#\#2.1.0. Définition des
+fonctions communes:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{g_support =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(scal) \{ }\KeywordTok{return}\NormalTok{( }\KeywordTok{expm1}\NormalTok{(scal)}\OperatorTok{/}\KeywordTok{expm1}\NormalTok{(}\DecValTok{1}\NormalTok{) ) \} }\CommentTok{##exp()-1}
+\NormalTok{MSE =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(vect_res)}
+\NormalTok{\{}
+\NormalTok{  nbRep =}\StringTok{ }\KeywordTok{length}\NormalTok{(vect_res)}
+\NormalTok{  soluce =}\StringTok{ }\NormalTok{(}\KeywordTok{exp}\NormalTok{(}\DecValTok{2}\NormalTok{)}\OperatorTok{-}\DecValTok{3}\NormalTok{)}\OperatorTok{/}\KeywordTok{expm1}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+  \KeywordTok{return}\NormalTok{( }\KeywordTok{sum}\NormalTok{( (vect_res}\OperatorTok{-}\NormalTok{soluce)}\OperatorTok{**}\DecValTok{2}\NormalTok{)}\OperatorTok{/}\NormalTok{nbRep )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\#\#\#2.1.1 MC Noir/Blanc (NB):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{MC_NB =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(a, b, g_support, nb_points)}
+\NormalTok{\{}
+\NormalTok{  maj =}\StringTok{ }\KeywordTok{g_support}\NormalTok{(}\DecValTok{2}\NormalTok{) }\CommentTok{#Meilleur majorant: maj = g_support(2) }
+\NormalTok{  x =}\StringTok{ }\KeywordTok{runif}\NormalTok{(nb_points, a, b)}
+\NormalTok{  y =}\StringTok{ }\KeywordTok{runif}\NormalTok{(nb_points, }\DecValTok{0}\NormalTok{, maj)}
+  
+\NormalTok{  n_success =}\StringTok{ }\KeywordTok{sum}\NormalTok{( y }\OperatorTok{<}\StringTok{ }\KeywordTok{g_support}\NormalTok{(x) )}
+  \KeywordTok{return}\NormalTok{(maj }\OperatorTok{*}\StringTok{ }\NormalTok{(b}\OperatorTok{-}\NormalTok{a) }\OperatorTok{*}\StringTok{ }\NormalTok{n_success}\OperatorTok{/}\NormalTok{nb_points)  }
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\#\#Histogramme pour MC Noir/Blanc
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(MASS)}
+\NormalTok{I <-}\StringTok{ }\NormalTok{(}\KeywordTok{exp}\NormalTok{(}\DecValTok{2}\NormalTok{)}\OperatorTok{-}\DecValTok{3}\NormalTok{)}\OperatorTok{/}\NormalTok{(}\KeywordTok{exp}\NormalTok{(}\DecValTok{1}\NormalTok{)}\OperatorTok{-}\DecValTok{1}\NormalTok{)}
+\NormalTok{nrep=}\DecValTok{100000}
+\NormalTok{n=}\DecValTok{100}
+\NormalTok{res1=}\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{,nrep)}
+
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{nrep) \{}
+\NormalTok{  res1[i]=}\KeywordTok{MC_NB}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{2}\NormalTok{,g_support,n)}
+\NormalTok{\}}
+\NormalTok{mse1=(}\KeywordTok{sum}\NormalTok{(res1}\OperatorTok{-}\NormalTok{I)}\OperatorTok{**}\DecValTok{2}\OperatorTok{/}\NormalTok{nrep)}
+\KeywordTok{truehist}\NormalTok{(res1)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TP1_SimulStoch_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{mean}\NormalTok{(res1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 2.554405
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var}\NormalTok{(res1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.1245338
+\end{verbatim}
+
+\#\#\#2.1.2 MC avec densité auxiliaire SIMPLE (uniforme)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{MC_simple =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(a, b, g_support, nb_points)}
+\NormalTok{\{}
+\NormalTok{  x_unif =}\StringTok{ }\KeywordTok{runif}\NormalTok{(nb_points, a, b)}
+  \KeywordTok{return}\NormalTok{ ( (b}\OperatorTok{-}\NormalTok{a) }\OperatorTok{*}\StringTok{ }\KeywordTok{mean}\NormalTok{(}\KeywordTok{g_support}\NormalTok{(x_unif)) )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\#\#Histogramme MC simple
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nrep=}\DecValTok{100000}
+\NormalTok{n=}\DecValTok{100}
+\NormalTok{res2=}\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{,nrep)}
+
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{nrep) \{}
+\NormalTok{  res2[i]=}\KeywordTok{MC_simple}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{2}\NormalTok{,g_support,n)}
+\NormalTok{\}}
+\NormalTok{mse2=(}\KeywordTok{sum}\NormalTok{(res2}\OperatorTok{-}\NormalTok{I)}\OperatorTok{**}\DecValTok{2}\OperatorTok{/}\NormalTok{nrep)}
+\KeywordTok{truehist}\NormalTok{(res2)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TP1_SimulStoch_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{mean}\NormalTok{(res2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 2.554296
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var}\NormalTok{(res2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.04377061
+\end{verbatim}
+
+\#\#\#2.1.3 MC avec densité auxiliaire en BETA:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{MC_beta =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(alpha, beta, k, nb_points, g_support)}
+\NormalTok{\{ }\CommentTok{#k pour [0, k]}
+\NormalTok{  ech_beta =}\StringTok{ }\NormalTok{k }\OperatorTok{*}\StringTok{ }\KeywordTok{rbeta}\NormalTok{(nb_points, alpha, beta)}
+\NormalTok{  f_beta =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(scal) \{ }\KeywordTok{return}\NormalTok{( }\KeywordTok{dbeta}\NormalTok{(scal}\OperatorTok{/}\NormalTok{k, alpha, beta) ) \}}
+  
+  \KeywordTok{return}\NormalTok{ ( k }\OperatorTok{*}\StringTok{ }\KeywordTok{mean}\NormalTok{(}\KeywordTok{g_support}\NormalTok{(ech_beta)}\OperatorTok{/}\KeywordTok{f_beta}\NormalTok{(ech_beta)) )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\#\#Histogramme MC Beta :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nrep=}\DecValTok{100000}
+\NormalTok{n=}\DecValTok{100}
+\NormalTok{res3=}\KeywordTok{rep}\NormalTok{(}\OtherTok{NA}\NormalTok{,nrep)}
+
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{nrep) \{}
+\NormalTok{  res3[i]=}\KeywordTok{MC_beta}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{ ,n,g_support)}
+\NormalTok{\}}
+\NormalTok{mse3=(}\KeywordTok{sum}\NormalTok{(res3}\OperatorTok{-}\NormalTok{I)}\OperatorTok{**}\DecValTok{2}\OperatorTok{/}\NormalTok{nrep)}
+\KeywordTok{truehist}\NormalTok{(res3)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TP1_SimulStoch_files/figure-latex/unnamed-chunk-7-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{mean}\NormalTok{(res3)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 2.55448
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{var}\NormalTok{(res3)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.004486471
+\end{verbatim}
+
+\#\#2.2 Comparaisons et optimisations: \#\#\#2.2.1 Comparaison des 3
+méthodes:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nbRep =}\StringTok{ }\DecValTok{10000}
+\NormalTok{nb_points =}\StringTok{ }\DecValTok{200}
+\end{Highlighting}
+\end{Shaded}
+
+On commence par créer les vecteurs associés à chacune des 4 méthodes
+(NB, SIMPLE, BETA(alpha=2,beta=1) et BETA(alpha=1,beta=2)):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{vect_res_NB =}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, nbRep)}
+\NormalTok{vect_res_SIMPLE =}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, nbRep)}
+\NormalTok{vect_res_BETA_}\DecValTok{2}\NormalTok{_}\DecValTok{1}\NormalTok{ =}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, nbRep)}
+\NormalTok{vect_res_BETA_}\DecValTok{1}\NormalTok{_}\DecValTok{2}\NormalTok{ =}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, nbRep)}
+
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{nbRep)}
+\NormalTok{\{}
+\NormalTok{  vect_res_NB[i] =}\StringTok{ }\KeywordTok{MC_NB}\NormalTok{(}\DataTypeTok{a=}\DecValTok{0}\NormalTok{, }\DataTypeTok{b=}\DecValTok{2}\NormalTok{, g_support, nb_points)}
+\NormalTok{  vect_res_SIMPLE[i] =}\StringTok{ }\KeywordTok{MC_simple}\NormalTok{(}\DataTypeTok{a=}\DecValTok{0}\NormalTok{, }\DataTypeTok{b=}\DecValTok{2}\NormalTok{, g_support, nb_points)}
+\NormalTok{  vect_res_BETA_}\DecValTok{2}\NormalTok{_}\DecValTok{1}\NormalTok{[i] =}\StringTok{ }\KeywordTok{MC_beta}\NormalTok{(}\DataTypeTok{alpha=}\DecValTok{2}\NormalTok{, }\DataTypeTok{beta=}\DecValTok{1}\NormalTok{, }\DataTypeTok{k=}\DecValTok{2}\NormalTok{, nb_points, g_support)}
+\NormalTok{  vect_res_BETA_}\DecValTok{1}\NormalTok{_}\DecValTok{2}\NormalTok{[i] =}\StringTok{ }\KeywordTok{MC_beta}\NormalTok{(}\DataTypeTok{alpha=}\DecValTok{1}\NormalTok{, }\DataTypeTok{beta=}\DecValTok{2}\NormalTok{, }\DataTypeTok{k=}\DecValTok{2}\NormalTok{, nb_points, g_support)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{( }\KeywordTok{paste}\NormalTok{( }\StringTok{"MOY_NB ="}\NormalTok{, }\KeywordTok{mean}\NormalTok{(vect_res_NB), }\StringTok{"| MSE_NB ="}\NormalTok{, }\KeywordTok{MSE}\NormalTok{(vect_res_NB) ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "MOY_NB = 2.5560845053104 | MSE_NB = 0.0619192005981771"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{( }\KeywordTok{paste}\NormalTok{( }\StringTok{"MOY_SIMPLE ="}\NormalTok{, }\KeywordTok{mean}\NormalTok{(vect_res_SIMPLE), }
+              \StringTok{"| MSE_SIMPLE ="}\NormalTok{, }\KeywordTok{MSE}\NormalTok{(vect_res_SIMPLE) ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "MOY_SIMPLE = 2.55523863797656 | MSE_SIMPLE = 0.0216550855954816"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{( }\KeywordTok{paste}\NormalTok{( }\StringTok{"MOY_BETA_2_1 ="}\NormalTok{, }\KeywordTok{mean}\NormalTok{(vect_res_BETA_}\DecValTok{2}\NormalTok{_}\DecValTok{1}\NormalTok{), }
+              \StringTok{"| MSE_BETA_2_1 ="}\NormalTok{, }\KeywordTok{MSE}\NormalTok{(vect_res_BETA_}\DecValTok{2}\NormalTok{_}\DecValTok{1}\NormalTok{) ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "MOY_BETA_2_1 = 2.55473567479109 | MSE_BETA_2_1 = 0.0022381194365935"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{(}\KeywordTok{paste}\NormalTok{(}\StringTok{"MOY_BETA_1_2 ="}\NormalTok{, }\KeywordTok{mean}\NormalTok{(vect_res_BETA_}\DecValTok{1}\NormalTok{_}\DecValTok{2}\NormalTok{), }
+            \StringTok{"| MSE_BETA_1_2 ="}\NormalTok{, }\KeywordTok{MSE}\NormalTok{(vect_res_BETA_}\DecValTok{1}\NormalTok{_}\DecValTok{2}\NormalTok{)  ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "MOY_BETA_1_2 = 2.57839266096866 | MSE_BETA_1_2 = 5.68951771489007"
+\end{verbatim}
+
+On voit bien ici, que même si les valeurs de I calculées en faisant la
+moyenne pour 100000 répétitions sont équivalentes, les précisions sur le
+résultat, ou autrement dit les fluctuations d'échantillonnage changent
+(quantifiées par le MSE). On voit donc que ça va en diminuant du NB au
+BETA\_2\_1, ce qui indique que SIMPLE est meilleure que NB d'un facteur
+3, mais moins bonne que BETA\_2\_1 d'un facteur 10 BETA\_1\_2 est à
+part, avec le plus mauvais MSE des 4 méthodes.
+
+Il est possible d'expliquer \textbf{qualitativement} les résultats des 3
+méthodes MC par ``échantillonnage'', en les classant par MSE et en
+affichant leurs densités de probabilité:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{graphics.off}\NormalTok{()}
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow=}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{))}
+
+\KeywordTok{curve}\NormalTok{(}\KeywordTok{expm1}\NormalTok{(x)}\OperatorTok{/}\KeywordTok{expm1}\NormalTok{(}\DecValTok{1}\NormalTok{), }\DataTypeTok{from=}\DecValTok{0}\NormalTok{, }\DataTypeTok{to=}\DecValTok{2}\NormalTok{, }\DataTypeTok{xname=}\StringTok{"x"}\NormalTok{, }
+          \DataTypeTok{main=}\StringTok{"alpha=1 beta=2"}\NormalTok{,}
+          \DataTypeTok{xlab=}\StringTok{"alpha"}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"beta"}\NormalTok{)}
+\KeywordTok{curve}\NormalTok{(}\KeywordTok{dbeta}\NormalTok{(x}\OperatorTok{/}\DecValTok{2}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{)}\OperatorTok{/}\DecValTok{2}\NormalTok{, }\DataTypeTok{from=}\DecValTok{0}\NormalTok{, }\DataTypeTok{to=}\DecValTok{2}\NormalTok{, }\DataTypeTok{xname=}\StringTok{"x"}\NormalTok{, }\DataTypeTok{add=}\NormalTok{T)}
+
+\KeywordTok{curve}\NormalTok{(}\KeywordTok{expm1}\NormalTok{(x)}\OperatorTok{/}\KeywordTok{expm1}\NormalTok{(}\DecValTok{1}\NormalTok{), }\DataTypeTok{from=}\DecValTok{0}\NormalTok{, }\DataTypeTok{to=}\DecValTok{2}\NormalTok{, }\DataTypeTok{xname=}\StringTok{"x"}\NormalTok{, }
+          \DataTypeTok{main=}\StringTok{"UNIFORME"}\NormalTok{,}
+          \DataTypeTok{xlab=}\StringTok{"alpha"}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"beta"}\NormalTok{)}
+\KeywordTok{abline}\NormalTok{(}\DataTypeTok{a=}\DecValTok{1}\OperatorTok{/}\DecValTok{2}\NormalTok{, }\DataTypeTok{b=}\DecValTok{0}\NormalTok{)}
+
+\KeywordTok{curve}\NormalTok{(}\KeywordTok{expm1}\NormalTok{(x)}\OperatorTok{/}\KeywordTok{expm1}\NormalTok{(}\DecValTok{1}\NormalTok{), }\DataTypeTok{from=}\DecValTok{0}\NormalTok{, }\DataTypeTok{to=}\DecValTok{2}\NormalTok{, }\DataTypeTok{xname=}\StringTok{"x"}\NormalTok{, }
+          \DataTypeTok{main=}\StringTok{"alpha=2 beta=1"}\NormalTok{,}
+          \DataTypeTok{xlab=}\StringTok{"alpha"}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"beta"}\NormalTok{)}
+\KeywordTok{curve}\NormalTok{(}\KeywordTok{dbeta}\NormalTok{(x}\OperatorTok{/}\DecValTok{2}\NormalTok{, }\DecValTok{2}\NormalTok{, }\DecValTok{1}\NormalTok{)}\OperatorTok{/}\DecValTok{2}\NormalTok{, }\DataTypeTok{from=}\DecValTok{0}\NormalTok{, }\DataTypeTok{to=}\DecValTok{2}\NormalTok{, }\DataTypeTok{xname=}\StringTok{"x"}\NormalTok{, }\DataTypeTok{add=}\NormalTok{T)}
+\end{Highlighting}
+\end{Shaded}
+
+On a vu précédemment que sur ce type de méthodes par ``importance
+variable'' des valeurs, c'est la densité de probabilité de la variable
+auxiliaire qui détermine l'importance accordée à chaque valeur de
+l'intervalle support. De ce fait, plus la densité auxiliaire ``mîme''
+fidèlement la densité de g (fonction de référence), plus on accorde une
+grande importance aux valeurs de g(x) les plus grandes, celles qui
+contribuent le plus à l'aire, meilleure sera l'approximation. Ainsi pour
+BETA\_1\_2, la densité auxiliaire s'oppose à la tendance de la densité
+de référence, accordant donc plus d'importance aux valeurs inférieures à
+1, qui sont pourtant celles qui contribuent le moins à l'aire, puis que
+g est croissante sur {[}0, 2{]}. D'où son mauvais MSE. De même, avec sa
+densité de probabilité plate, la variable auxiliaire donne une
+importance équivalente à toutes les valeurs de l'intervalle, d'où son
+MSE intermédiaire C'est BETA\_2\_1 qui ``épouse'' le mieux g, d'où son
+MSE meilleur que les 2 autres.
+
+\#\#2.2.2 Determination du meilleur couple (alpha ; beta): Maintenant
+qu'on a vu que la simple inversion des valeurs de alpha et bêta dans la
+variable auxiliaire suffit à augmenter grandement le MSE, on va chercher
+à déterminer les valeurs optimales de alpha et bêta, celles qui
+maximisent le MSE
+
+On commence par créer une fonction de calcul du MSE adpatée aux
+fonctions de type Bêta:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{MSE_BETA =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(vect_param)}
+\NormalTok{\{}
+\NormalTok{  my_alpha =}\StringTok{ }\NormalTok{vect_param[}\DecValTok{1}\NormalTok{] ; my_beta =}\StringTok{ }\NormalTok{vect_param[}\DecValTok{2}\NormalTok{]}
+\NormalTok{  nbRep =}\StringTok{ }\DecValTok{10000}
+\NormalTok{  g_support =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(scal) \{ }\KeywordTok{return}\NormalTok{( }\KeywordTok{expm1}\NormalTok{(scal)}\OperatorTok{/}\KeywordTok{expm1}\NormalTok{(}\DecValTok{1}\NormalTok{) ) \}}
+  
+\NormalTok{  vect_res =}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, nbRep)}
+  
+  \ControlFlowTok{for}\NormalTok{ (rep }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\NormalTok{nbRep)}
+\NormalTok{  \{}
+\NormalTok{    vect_res[rep] =}\StringTok{ }\KeywordTok{MC_beta}\NormalTok{(}\DataTypeTok{alpha=}\NormalTok{my_alpha, }\DataTypeTok{beta=}\NormalTok{my_beta, }
+                            \DataTypeTok{k=}\DecValTok{2}\NormalTok{, }\DecValTok{200}\NormalTok{, g_support)  }
+\NormalTok{  \}}
+\NormalTok{  soluce =}\StringTok{ }\NormalTok{(}\KeywordTok{exp}\NormalTok{(}\DecValTok{2}\NormalTok{)}\OperatorTok{-}\DecValTok{3}\NormalTok{)}\OperatorTok{/}\KeywordTok{expm1}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+  \KeywordTok{return}\NormalTok{( }\KeywordTok{sum}\NormalTok{( (vect_res}\OperatorTok{-}\NormalTok{soluce)}\OperatorTok{**}\DecValTok{2}\NormalTok{)}\OperatorTok{/}\NormalTok{nbRep )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Ensuite, on procède à un 1er quadrillage visuel grossier, pour rétrécir
+l'espace dans lequel on recherche les alpha et bêta optimaux:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pas =}\StringTok{ }\DecValTok{1}
+\NormalTok{range_alpha =}\StringTok{ }\KeywordTok{seq}\NormalTok{(pas, }\DecValTok{5}\NormalTok{, }\DataTypeTok{by=}\NormalTok{pas)}
+\NormalTok{range_beta =}\StringTok{ }\KeywordTok{seq}\NormalTok{(pas, }\DecValTok{3}\NormalTok{, }\DataTypeTok{by=}\NormalTok{pas)}
+\NormalTok{long_alpha =}\StringTok{ }\KeywordTok{length}\NormalTok{(range_alpha)}
+\NormalTok{long_beta =}\StringTok{ }\KeywordTok{length}\NormalTok{(range_beta)}
+
+\KeywordTok{graphics.off}\NormalTok{()}
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow =} \KeywordTok{c}\NormalTok{(long_alpha, long_beta), }\DataTypeTok{mar =} \KeywordTok{rep}\NormalTok{(}\DecValTok{2}\NormalTok{, }\DecValTok{4}\NormalTok{))}
+\ControlFlowTok{for}\NormalTok{ (my_alpha }\ControlFlowTok{in}\NormalTok{ range_alpha)}
+\NormalTok{\{}
+  \ControlFlowTok{for}\NormalTok{ (my_beta }\ControlFlowTok{in}\NormalTok{ range_beta)}
+\NormalTok{  \{}
+    \KeywordTok{curve}\NormalTok{(}\KeywordTok{expm1}\NormalTok{(x)}\OperatorTok{/}\KeywordTok{expm1}\NormalTok{(}\DecValTok{1}\NormalTok{), }\DataTypeTok{from=}\DecValTok{0}\NormalTok{, }\DataTypeTok{to=}\DecValTok{2}\NormalTok{, }\DataTypeTok{xname=}\StringTok{"x"}\NormalTok{, }
+          \DataTypeTok{main=}\KeywordTok{paste}\NormalTok{(}\StringTok{"alpha="}\NormalTok{, my_alpha, }\StringTok{"beta="}\NormalTok{, my_beta),}
+          \DataTypeTok{xlab=}\StringTok{"alpha"}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"beta"}\NormalTok{)}
+    \KeywordTok{curve}\NormalTok{(}\KeywordTok{dbeta}\NormalTok{(x}\OperatorTok{/}\DecValTok{2}\NormalTok{, my_alpha, my_beta)}\OperatorTok{/}\DecValTok{2}\NormalTok{, }\DataTypeTok{from=}\DecValTok{0}\NormalTok{, }\DataTypeTok{to=}\DecValTok{2}\NormalTok{, }\DataTypeTok{xname=}\StringTok{"x"}\NormalTok{, }\DataTypeTok{add=}\NormalTok{T)}
+\NormalTok{  \}}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+En allant voir les formules compliquées sur la loi Bêta sur Wikipédia,
+on sait déjà que alpha et bêta doit tous les 2 être \textbf{strictement}
+positifs. Ensuite, on peut voir que pour bêta \textgreater{}= 2, les
+densités auxiliaires perdent en proximité avec la densité de référence.
+Donc on fera varier bêta sur {]}0 ; 2{[} Pour alpha, c'est un peu plus
+compliqué, ça l'air de mîmer g de mieux en mieux, au fur et à mesure que
+alpha augmente.
+
+On va mainteant essayer de déterminer les valeurs numériques optimales
+de alpha et bêta, en essayant de trouver celles pour lesquelles le MSE
+est minimal. Pour ça, on utilise une méthode de ``grille'', en créant un
+tableau (matrice) contenant le MSE associé à chaque couple (alpha ;
+bêta):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{system.time}\NormalTok{(}
+\NormalTok{\{  }
+\NormalTok{  pas_beta =}\StringTok{ }\FloatTok{0.5}
+\NormalTok{  pas_alpha =}\StringTok{ }\DecValTok{1}
+\NormalTok{  range_alpha =}\StringTok{ }\KeywordTok{seq}\NormalTok{(pas_alpha, }\DecValTok{5}\NormalTok{, }\DataTypeTok{by=}\NormalTok{pas_alpha)}
+\NormalTok{  range_beta =}\StringTok{ }\KeywordTok{seq}\NormalTok{(pas_beta, }\DecValTok{2}\OperatorTok{-}\NormalTok{pas_beta, }\DataTypeTok{by=}\NormalTok{pas_beta)}
+  
+\NormalTok{  mat_res =}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data=}\DecValTok{0}\NormalTok{, }\DataTypeTok{nrow=}\NormalTok{long_alpha, }\DataTypeTok{ncol=}\NormalTok{long_beta)}
+\NormalTok{  i =}\StringTok{ }\DecValTok{1}
+  
+  \ControlFlowTok{for}\NormalTok{ (my_alpha }\ControlFlowTok{in}\NormalTok{ range_alpha)}
+\NormalTok{  \{}
+\NormalTok{    j =}\StringTok{ }\DecValTok{1}
+    \ControlFlowTok{for}\NormalTok{ (my_beta }\ControlFlowTok{in}\NormalTok{ range_beta)}
+\NormalTok{    \{}
+\NormalTok{      vect_param =}\StringTok{ }\KeywordTok{c}\NormalTok{(my_alpha, my_beta)}
+\NormalTok{      mat_res[i, j] =}\StringTok{ }\KeywordTok{MSE_BETA}\NormalTok{(vect_param)}
+\NormalTok{      j =}\StringTok{ }\NormalTok{j }\OperatorTok{+}\StringTok{ }\DecValTok{1}
+\NormalTok{    \}}
+\NormalTok{    i =}\StringTok{ }\NormalTok{i }\OperatorTok{+}\StringTok{ }\DecValTok{1}
+\NormalTok{  \}}
+\NormalTok{\})}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    user  system elapsed 
+##  28.309   0.000  28.309
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#library(rgl) #mininstall -c r r-rgl}
+\CommentTok{#x = scan()}
+
+\CommentTok{#persp3d(range_alpha, range_beta, 1/mat_res, xlab="alpha", ylab="beta")}
+\CommentTok{#persp(range_alpha, range_beta, 1/mat_res,  xlab="alpha", ylab="beta",}
+      \CommentTok{#ticktype="detailed")}
+\end{Highlighting}
+\end{Shaded}
+
+En plottant l'inverse des MSE plutôt que les MSE directement en Z, il
+semble qu'on amplifie les écarts. On voit donc clairement apparaître sur
+le plot 3D un ``pic'', de coordonnées (alpha=3 ; bêta=1), qui semblent
+être les valeurs optimales des paramètres alpha et bêta
+
+REMARQUE: On pourrait regarder les valeurs prises autour de 1 et 3, pour
+savoir si c'est exactement ces valeurs ou plutôt des trucs à virgules
+
+EN UTILISANT OPTIM:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#res_final = optim(c(2, 1), fn=MSE_BETA, method=c("BFGS"))}
+\end{Highlighting}
+\end{Shaded}
+
+\#EXERCICE 3: \#\#1. Méthode d'inversion de la fonction de répartition
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my_rpois_one =}\StringTok{ }\ControlFlowTok{function}\NormalTok{ (lambda)}
+\NormalTok{\{}
+\NormalTok{  one_x_unif =}\StringTok{ }\KeywordTok{runif}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+\NormalTok{  compt =}\StringTok{ }\DecValTok{0}
+\NormalTok{  flag =}\StringTok{ }\NormalTok{T}
+  
+  \ControlFlowTok{while}\NormalTok{ (flag)}
+\NormalTok{  \{}
+    \ControlFlowTok{if}\NormalTok{ ( }\KeywordTok{ppois}\NormalTok{(compt, lambda) }\OperatorTok{<}\StringTok{ }\NormalTok{one_x_unif )}
+\NormalTok{    \{}
+\NormalTok{      compt =}\StringTok{ }\NormalTok{compt }\OperatorTok{+}\StringTok{ }\DecValTok{1} \CommentTok{#On incrémente le compteur}
+      
+\NormalTok{    \} }\ControlFlowTok{else}\NormalTok{ \{ flag =}\StringTok{ }\NormalTok{F \}}
+\NormalTok{  \} }
+  
+  \KeywordTok{return}\NormalTok{ (compt)    }
+\NormalTok{\}}
+
+\NormalTok{my_rpois =}\StringTok{ }\ControlFlowTok{function}\NormalTok{ (n, lambda)}
+\NormalTok{\{}
+  \KeywordTok{return}\NormalTok{( }\KeywordTok{replicate}\NormalTok{(n, }\KeywordTok{my_rpois_one}\NormalTok{(lambda)) )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nbPoints =}\StringTok{ }\DecValTok{10000}
+\NormalTok{lambda =}\StringTok{ }\DecValTok{10}
+\NormalTok{nb_tires =}\StringTok{ }\KeywordTok{my_rpois}\NormalTok{(nbPoints, lambda)}
+
+\KeywordTok{plot}\NormalTok{( }\KeywordTok{table}\NormalTok{(nb_tires)}\OperatorTok{/}\NormalTok{nbPoints, }\DataTypeTok{xlab=}\StringTok{"n"}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"proba"}\NormalTok{)}
+\KeywordTok{title}\NormalTok{(}\DataTypeTok{main=}\StringTok{"Histogramme des fréq des entiers générés"}\NormalTok{,}
+      \DataTypeTok{sub=}\StringTok{"(en rouge, la valeur attendue)"}\NormalTok{, }\DataTypeTok{outer=}\NormalTok{F)}
+
+\NormalTok{x_vect =}\StringTok{ }\DecValTok{0}\OperatorTok{:}\KeywordTok{max}\NormalTok{(nb_tires)}
+\NormalTok{y_vect =}\StringTok{ }\KeywordTok{dpois}\NormalTok{( x_vect, lambda )}
+\KeywordTok{points}\NormalTok{(x_vect, y_vect, }\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TP1_SimulStoch_files/figure-latex/unnamed-chunk-17-1.pdf}
+
+\#\#2. Simulation d'une variable discrète quelconque
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my_rdiscret_one =}\StringTok{ }\ControlFlowTok{function}\NormalTok{()}
+\NormalTok{\{}
+\NormalTok{  support_discret =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\OperatorTok{-}\DecValTok{3}\NormalTok{, }\FloatTok{1.3}\NormalTok{, }\DecValTok{7}\NormalTok{, }\FloatTok{15.2}\NormalTok{)}
+\NormalTok{  f_rep_discret =}\StringTok{ }\KeywordTok{cumsum}\NormalTok{( }\KeywordTok{c}\NormalTok{(}\FloatTok{0.1}\NormalTok{, }\FloatTok{0.4}\NormalTok{, }\FloatTok{0.3}\NormalTok{, }\FloatTok{0.2}\NormalTok{) )}
+\NormalTok{  one_x_unif =}\StringTok{ }\KeywordTok{runif}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+  
+  \ControlFlowTok{for}\NormalTok{ ( i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\KeywordTok{length}\NormalTok{(support_discret) )}
+\NormalTok{  \{}
+    \ControlFlowTok{if}\NormalTok{ (one_x_unif }\OperatorTok{<}\StringTok{ }\NormalTok{f_rep_discret[i]) \{ }\KeywordTok{return}\NormalTok{ (support_discret[i]) \}}
+\NormalTok{  \}}
+\NormalTok{\}}
+
+
+\NormalTok{my_rdiscret =}\StringTok{ }\ControlFlowTok{function}\NormalTok{ (n)}
+\NormalTok{\{}
+  \KeywordTok{return}\NormalTok{( }\KeywordTok{replicate}\NormalTok{(n, }\KeywordTok{my_rdiscret_one}\NormalTok{()) )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nbPoints =}\StringTok{ }\DecValTok{10000}
+\NormalTok{lambda =}\StringTok{ }\DecValTok{10}
+\NormalTok{nb_tires =}\StringTok{ }\KeywordTok{my_rdiscret}\NormalTok{(nbPoints)}
+
+\KeywordTok{plot}\NormalTok{( }\KeywordTok{table}\NormalTok{(nb_tires)}\OperatorTok{/}\NormalTok{nbPoints, }\DataTypeTok{xlab=}\StringTok{"n"}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"proba"}\NormalTok{)}
+\KeywordTok{title}\NormalTok{(}\DataTypeTok{main=}\StringTok{"Histogramme des fréq des nbres générés"}\NormalTok{,}
+      \DataTypeTok{sub=}\StringTok{"(en rouge, la valeur attendue)"}\NormalTok{)}
+
+\NormalTok{x_vect =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\OperatorTok{-}\DecValTok{3}\NormalTok{, }\FloatTok{1.3}\NormalTok{, }\DecValTok{7}\NormalTok{, }\FloatTok{15.2}\NormalTok{)}
+\NormalTok{y_vect =}\StringTok{ }\KeywordTok{c}\NormalTok{(}\FloatTok{0.1}\NormalTok{, }\FloatTok{0.4}\NormalTok{, }\FloatTok{0.3}\NormalTok{, }\FloatTok{0.2}\NormalTok{)}
+\KeywordTok{points}\NormalTok{(x_vect, y_vect, }\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TP1_SimulStoch_files/figure-latex/unnamed-chunk-19-1.pdf}
+
+\#\#3. Méthode de transformation
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my_dlaplace =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(scal) \{ }\KeywordTok{return}\NormalTok{ ( }\KeywordTok{exp}\NormalTok{(}\OperatorTok{-}\KeywordTok{abs}\NormalTok{(scal))}\OperatorTok{/}\DecValTok{2}\NormalTok{ ) \}}
+
+\NormalTok{my_plaplace =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(scal)}
+\NormalTok{\{}
+  \ControlFlowTok{if}\NormalTok{ (scal }\OperatorTok{>}\StringTok{ }\DecValTok{0}\NormalTok{) \{ }\KeywordTok{return}\NormalTok{ ( }\DecValTok{1}\OperatorTok{-}\KeywordTok{exp}\NormalTok{(}\OperatorTok{-}\NormalTok{scal)}\OperatorTok{/}\DecValTok{2}\NormalTok{ ) \}}
+  \KeywordTok{return}\NormalTok{ ( }\KeywordTok{exp}\NormalTok{(scal)}\OperatorTok{/}\DecValTok{2}\NormalTok{ )}
+\NormalTok{\}}
+
+\NormalTok{my_qlaplace =}\StringTok{ }\ControlFlowTok{function}\NormalTok{()}
+\NormalTok{\{}
+\NormalTok{  proba =}\StringTok{ }\KeywordTok{runif}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+  \ControlFlowTok{if}\NormalTok{ (proba }\OperatorTok{<}\StringTok{ }\FloatTok{0.5}\NormalTok{) \{ }\KeywordTok{return}\NormalTok{ ( }\KeywordTok{log}\NormalTok{(}\DecValTok{2}\OperatorTok{*}\NormalTok{proba) ) \}}
+  \KeywordTok{return}\NormalTok{( }\OperatorTok{-}\KeywordTok{log}\NormalTok{(}\DecValTok{2}\OperatorTok{*}\NormalTok{(}\DecValTok{1}\OperatorTok{-}\NormalTok{proba)) )}
+\NormalTok{\}}
+
+\NormalTok{my_rlaplace =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(n)}
+\NormalTok{\{}
+  \KeywordTok{return}\NormalTok{( }\KeywordTok{replicate}\NormalTok{(n, }\KeywordTok{my_qlaplace}\NormalTok{()) )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nbPoints =}\StringTok{ }\DecValTok{10000}
+\KeywordTok{truehist}\NormalTok{(}\KeywordTok{my_rlaplace}\NormalTok{(nbPoints), }\DataTypeTok{xlim=}\KeywordTok{c}\NormalTok{(}\OperatorTok{-}\DecValTok{10}\NormalTok{, }\DecValTok{10}\NormalTok{), }\DataTypeTok{xlab=}\StringTok{"x"}\NormalTok{, }\DataTypeTok{ylab=}\StringTok{"proba"}\NormalTok{)}
+\KeywordTok{title}\NormalTok{(}\DataTypeTok{main=}\StringTok{"Histogramme des fréq des x générés"}\NormalTok{,}
+      \DataTypeTok{sub=}\StringTok{"(en rouge, la valeur attendue)"}\NormalTok{)}
+
+\NormalTok{x_vect =}\StringTok{ }\KeywordTok{seq}\NormalTok{(}\OperatorTok{-}\DecValTok{10}\NormalTok{, }\DecValTok{10}\NormalTok{, }\DataTypeTok{len=}\DecValTok{100}\NormalTok{)}
+\KeywordTok{lines}\NormalTok{(x_vect, }\KeywordTok{my_dlaplace}\NormalTok{(x_vect), }\DataTypeTok{col=}\StringTok{"red"}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TP1_SimulStoch_files/figure-latex/unnamed-chunk-21-1.pdf}
+
+\#\#4. Méthode de rejet 1) On détermine l'expression analytique de h:
+h(x) = 2 * exp(abs(x) - x**2/2) /2
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\setcounter{enumi}{1}
+\item
+  On dérive h et on cherche les valeurs de x qui annulent h'(x)
+  =\textgreater{} On trouve -1 si x\textless{}0 et 1 sinon
+\item
+  On détermine les valeurs de h(-1) et h(1), mais comme on a une valeur
+  absolue et un carré: h(1) = h(-1)
+\end{enumerate}
+
+h(1) = 2 * exp(1 - 1/2) /sqrt(2pi) = sqrt(2/pi) * exp(1/2)
+
+h(1) = m = sqrt( 2*exp(1)/pi )
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nb_points =}\StringTok{ }\DecValTok{10000}
+\NormalTok{maj =}\StringTok{ }\KeywordTok{sqrt}\NormalTok{( }\DecValTok{2}\OperatorTok{*}\KeywordTok{exp}\NormalTok{(}\DecValTok{1}\NormalTok{)}\OperatorTok{/}\NormalTok{pi )}
+
+\NormalTok{my_rnorm =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(nb_points, maj)}
+\NormalTok{\{}
+\NormalTok{  vect_x_i =}\StringTok{ }\KeywordTok{my_rlaplace}\NormalTok{(nb_points)}
+\NormalTok{  vect_u_i =}\StringTok{ }\KeywordTok{runif}\NormalTok{(nb_points)}
+\NormalTok{  h_i =}\StringTok{ }\KeywordTok{dnorm}\NormalTok{(vect_x_i) }\OperatorTok{/}\StringTok{ }\KeywordTok{my_dlaplace}\NormalTok{(vect_x_i)}
+\NormalTok{  filtre <-}\StringTok{ }\KeywordTok{which}\NormalTok{( vect_u_i }\OperatorTok{<=}\StringTok{ }\NormalTok{h_i}\OperatorTok{/}\NormalTok{maj )}
+  \KeywordTok{sum}\NormalTok{(filtre)}
+  \KeywordTok{return}\NormalTok{ ( vect_x_i[filtre] )}
+\NormalTok{\}}
+
+
+\NormalTok{vect_x_normaux =}\StringTok{ }\KeywordTok{my_rnorm}\NormalTok{(nb_points, maj)}
+\KeywordTok{truehist}\NormalTok{(vect_x_normaux)}
+\NormalTok{x_vect =}\StringTok{ }\KeywordTok{seq}\NormalTok{(}\OperatorTok{-}\DecValTok{4}\NormalTok{, }\DecValTok{4}\NormalTok{, }\DataTypeTok{len=}\DecValTok{100}\NormalTok{)}
+\KeywordTok{lines}\NormalTok{(x_vect, }\KeywordTok{dnorm}\NormalTok{(x_vect), }\DataTypeTok{col=}\StringTok{"red"}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TP1_SimulStoch_files/figure-latex/unnamed-chunk-22-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Comparaison des taux de rejets prévu et observé:}
+\KeywordTok{print}\NormalTok{( }\DecValTok{1} \OperatorTok{-}\StringTok{ }\KeywordTok{length}\NormalTok{(vect_x_normaux)}\OperatorTok{/}\NormalTok{nb_points)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.2345
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{print}\NormalTok{( }\DecValTok{1} \OperatorTok{-}\StringTok{ }\DecValTok{1}\OperatorTok{/}\NormalTok{maj )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.2398265
+\end{verbatim}
+
+\#\#5. Algorithme MCMC:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my_dprop =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(scal, delta) }\CommentTok{#Ca génère la nouvelle position}
+\NormalTok{\{}
+\NormalTok{  start =}\StringTok{ }\NormalTok{scal }\OperatorTok{-}\StringTok{ }\NormalTok{delta}
+\NormalTok{  end =}\StringTok{ }\NormalTok{scal }\OperatorTok{+}\StringTok{ }\NormalTok{delta}
+  
+  \KeywordTok{return}\NormalTok{ ( }\KeywordTok{runif}\NormalTok{(}\DecValTok{1}\NormalTok{, start, end) )}
+\NormalTok{\}}
+
+\NormalTok{my_rprop =}\StringTok{ }\ControlFlowTok{function}\NormalTok{ (n) \{ }\KeywordTok{return}\NormalTok{ ( }\KeywordTok{replicate}\NormalTok{(n, }\KeywordTok{dprop}\NormalTok{()) ) \}}
+
+\NormalTok{my_dtarget =}\StringTok{ }\ControlFlowTok{function}\NormalTok{ (scal)}
+\NormalTok{\{}
+  \KeywordTok{return}\NormalTok{ ( }\FloatTok{0.2}\OperatorTok{*}\KeywordTok{dnorm}\NormalTok{(scal, }\DecValTok{-3}\NormalTok{, }\DecValTok{2}\NormalTok{) }\OperatorTok{+}\StringTok{ }\FloatTok{0.5}\OperatorTok{*}\KeywordTok{dnorm}\NormalTok{(scal) }\OperatorTok{+}\StringTok{ }\FloatTok{0.3}\OperatorTok{*}\KeywordTok{dnorm}\NormalTok{(scal, }\DecValTok{5}\NormalTok{, }\DecValTok{3}\NormalTok{) )}
+\NormalTok{\}}
+
+\NormalTok{my_rtarget =}\StringTok{ }\ControlFlowTok{function}\NormalTok{ (nb_steps)}
+\NormalTok{\{}
+\NormalTok{  x_i =}\StringTok{ }\DecValTok{10} \CommentTok{#On s'en fout, point de départ}
+\NormalTok{  vect_x_i =}\StringTok{ }\KeywordTok{c}\NormalTok{(x_i, }\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{100}\NormalTok{))}
+\NormalTok{  delta =}\StringTok{ }\DecValTok{2}
+  
+  \ControlFlowTok{for}\NormalTok{( i }\ControlFlowTok{in} \DecValTok{2}\OperatorTok{:}\NormalTok{(nb_steps}\OperatorTok{+}\DecValTok{1}\NormalTok{) )}
+\NormalTok{  \{}
+\NormalTok{    y_i =}\StringTok{ }\KeywordTok{my_dprop}\NormalTok{(x_i, delta)}
+\NormalTok{    proba_decision =}\StringTok{ }\KeywordTok{min}\NormalTok{( }\DecValTok{1}\NormalTok{, }\KeywordTok{my_dtarget}\NormalTok{(y_i)}\OperatorTok{/}\KeywordTok{my_dtarget}\NormalTok{(x_i) )}
+\NormalTok{    u_decision =}\StringTok{ }\KeywordTok{runif}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+    
+    \ControlFlowTok{if}\NormalTok{ (u_decision }\OperatorTok{<}\StringTok{ }\NormalTok{proba_decision) \{  x_i =}\StringTok{ }\NormalTok{y_i \}}
+\NormalTok{    vect_x_i[i] =}\StringTok{ }\NormalTok{x_i}
+\NormalTok{  \}}
+  
+  \KeywordTok{return}\NormalTok{ ( vect_x_i )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{nb_steps =}\StringTok{ }\DecValTok{10000}
+\NormalTok{vect_target =}\StringTok{ }\KeywordTok{my_rtarget}\NormalTok{(nb_steps)}
+
+\KeywordTok{truehist}\NormalTok{( vect_target )}
+
+\NormalTok{x_vect =}\StringTok{ }\KeywordTok{seq}\NormalTok{(}\OperatorTok{-}\DecValTok{10}\NormalTok{, }\DecValTok{15}\NormalTok{, }\DataTypeTok{len=}\NormalTok{nb_steps)}
+\KeywordTok{lines}\NormalTok{( x_vect, }\KeywordTok{my_dtarget}\NormalTok{(x_vect), }\DataTypeTok{col=}\StringTok{"red"}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{TP1_SimulStoch_files/figure-latex/unnamed-chunk-25-1.pdf}
+
+\#EXERCICE 4: \#\#1. MCMC Bayesien
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my_rbeta =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(theta) \{ }\KeywordTok{return}\NormalTok{ ( }\KeywordTok{rbeta}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{1}\OperatorTok{/}\NormalTok{(}\DecValTok{1}\OperatorTok{-}\NormalTok{theta), }\DecValTok{2}\NormalTok{) ) \}}
+
+\NormalTok{my_dbeta_condition =}\StringTok{ }\ControlFlowTok{function}\NormalTok{ (theta, theta_prim)}
+\NormalTok{\{}
+  \KeywordTok{return}\NormalTok{ ( }\KeywordTok{dbeta}\NormalTok{(theta, }\DecValTok{1}\OperatorTok{/}\NormalTok{(}\DecValTok{1}\OperatorTok{-}\NormalTok{theta_prim), }\DecValTok{2}\NormalTok{) )}
+\NormalTok{\}}
+
+\NormalTok{calc_proba_decision =}\StringTok{ }\ControlFlowTok{function}\NormalTok{ (theta, theta_prim)}
+\NormalTok{\{}
+\NormalTok{  vraiss_theta =}\StringTok{ }\KeywordTok{dbinom}\NormalTok{(}\DecValTok{70}\NormalTok{, }\DecValTok{100}\NormalTok{, theta)}
+\NormalTok{  vraiss_theta_prim =}\StringTok{ }\KeywordTok{dbinom}\NormalTok{(}\DecValTok{70}\NormalTok{, }\DecValTok{100}\NormalTok{, theta_prim)}
+  
+\NormalTok{  numerat =}\StringTok{ }\NormalTok{vraiss_theta_prim }\OperatorTok{*}\StringTok{ }\KeywordTok{my_dbeta_condition}\NormalTok{(theta, theta_prim)}
+\NormalTok{  denominat =}\StringTok{ }\NormalTok{vraiss_theta }\OperatorTok{*}\StringTok{ }\KeywordTok{my_dbeta_condition}\NormalTok{(theta_prim, theta)}
+  
+  \KeywordTok{return}\NormalTok{ (numerat}\OperatorTok{/}\NormalTok{denominat)}
+\NormalTok{\}}
+
+\CommentTok{#Comme theta est sur [0;1], pi(theta) = 1 = pi(theta_prim) ??}
+
+\NormalTok{MCMC_beta_mutation =}\StringTok{ }\ControlFlowTok{function}\NormalTok{ (nb_steps)}
+\NormalTok{\{}
+\NormalTok{  theta =}\StringTok{ }\KeywordTok{runif}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+\NormalTok{  vec_theta =}\StringTok{ }\KeywordTok{c}\NormalTok{( theta, }\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, nb_steps) )}
+\NormalTok{  size_ech =}\StringTok{ }\DecValTok{100}
+  
+  \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{2}\OperatorTok{:}\NormalTok{(nb_steps}\OperatorTok{+}\DecValTok{1}\NormalTok{))}
+\NormalTok{  \{}
+\NormalTok{    theta_prim =}\StringTok{ }\KeywordTok{min}\NormalTok{( }\DecValTok{1}\NormalTok{, }\KeywordTok{my_rbeta}\NormalTok{(theta) )}
+\NormalTok{    proba_decision =}\StringTok{ }\KeywordTok{min}\NormalTok{( }\DecValTok{1}\NormalTok{, }\KeywordTok{calc_proba_decision}\NormalTok{(theta, theta_prim) )}
+
+    \ControlFlowTok{if}\NormalTok{ (}\KeywordTok{runif}\NormalTok{(}\DecValTok{1}\NormalTok{) }\OperatorTok{<}\StringTok{ }\NormalTok{proba_decision) \{ theta =}\StringTok{ }\NormalTok{theta_prim \}}
+\NormalTok{    vec_theta[i] =}\StringTok{ }\NormalTok{theta}
+\NormalTok{  \}}
+  
+  \KeywordTok{return}\NormalTok{ (vec_theta)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\#\#2. Simulation de la loi conjointe
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{simul_conjointe =}\StringTok{ }\ControlFlowTok{function}\NormalTok{ (nb_points, freq_mut_obs)}
+\NormalTok{\{}
+\NormalTok{  vec_theta =}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, nb_points)}
+\NormalTok{  compt_pts =}\StringTok{ }\DecValTok{1}
+  
+  \ControlFlowTok{while}\NormalTok{(compt_pts }\OperatorTok{<}\StringTok{ }\NormalTok{nb_points)}
+\NormalTok{  \{}
+\NormalTok{    theta =}\StringTok{ }\KeywordTok{runif}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+\NormalTok{    size_ech =}\StringTok{ }\DecValTok{100}
+\NormalTok{    nb_mut_simul =}\StringTok{ }\KeywordTok{rbinom}\NormalTok{(}\DecValTok{1}\NormalTok{, size_ech, theta)}
+    
+    \ControlFlowTok{if}\NormalTok{ ( nb_mut_simul }\OperatorTok{==}\StringTok{ }\NormalTok{(freq_mut_obs}\OperatorTok{*}\NormalTok{size_ech) )}
+\NormalTok{    \{}
+\NormalTok{      vec_theta[compt_pts] =}\StringTok{ }\NormalTok{theta}
+\NormalTok{      compt_pts =}\StringTok{ }\NormalTok{compt_pts }\OperatorTok{+}\StringTok{ }\DecValTok{1}
+\NormalTok{    \}}
+\NormalTok{  \}}
+  
+  \KeywordTok{return}\NormalTok{ (vec_theta[}\DecValTok{1}\OperatorTok{:}\NormalTok{(compt_pts)])}
+\NormalTok{\}}
+
+\NormalTok{simul_conj_one =}\StringTok{ }\ControlFlowTok{function}\NormalTok{ (freq_mut_obs)}
+\NormalTok{\{}
+  \CommentTok{#na.omit(replicate(1000000, simul_conj_one)), met 3 secondes de plus que}
+  \CommentTok{#l'autre}
+  
+\NormalTok{  theta =}\StringTok{ }\KeywordTok{runif}\NormalTok{(}\DecValTok{1}\NormalTok{)}
+\NormalTok{  size_ech =}\StringTok{ }\DecValTok{100}
+  
+  \ControlFlowTok{if}\NormalTok{ ( }\KeywordTok{rbinom}\NormalTok{(}\DecValTok{1}\NormalTok{, size_ech, theta) }\OperatorTok{==}\StringTok{ }\NormalTok{(size_ech}\OperatorTok{*}\NormalTok{freq_mut_obs) )}
+    \KeywordTok{return}\NormalTok{ (theta)}
+  \KeywordTok{return}\NormalTok{(}\OtherTok{NA}\NormalTok{)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{vec_theta_MCMC =}\StringTok{ }\KeywordTok{MCMC_beta_mutation}\NormalTok{(}\DecValTok{10000}\NormalTok{)}
+\NormalTok{vec_theta_bourrin =}\StringTok{ }\KeywordTok{simul_conjointe}\NormalTok{(}\DecValTok{10000}\NormalTok{, }\FloatTok{0.7}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Par résolution analytique: pi(theta/x) --> loi bêta (x + 1, n − x + 1)}
+
+\KeywordTok{graphics.off}\NormalTok{()}
+\KeywordTok{par}\NormalTok{( }\DataTypeTok{mfrow=}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{2}\NormalTok{) )}
+\KeywordTok{truehist}\NormalTok{(vec_theta_MCMC, }\DataTypeTok{xlim=}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+\KeywordTok{curve}\NormalTok{(}\KeywordTok{dbeta}\NormalTok{(x, }\DecValTok{70}\OperatorTok{+}\DecValTok{1}\NormalTok{, }\DecValTok{30}\OperatorTok{+}\DecValTok{1}\NormalTok{), }\DataTypeTok{from=}\DecValTok{0}\NormalTok{, }\DataTypeTok{to=}\DecValTok{1}\NormalTok{, }\DataTypeTok{add=}\NormalTok{T, }\DataTypeTok{xname=}\StringTok{"x"}\NormalTok{, }\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\KeywordTok{truehist}\NormalTok{(vec_theta_bourrin, }\DataTypeTok{xlim=}\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+\KeywordTok{curve}\NormalTok{(}\KeywordTok{dbeta}\NormalTok{(x, }\DecValTok{70}\OperatorTok{+}\DecValTok{1}\NormalTok{, }\DecValTok{30}\OperatorTok{+}\DecValTok{1}\NormalTok{), }\DataTypeTok{from=}\DecValTok{0}\NormalTok{, }\DataTypeTok{to=}\DecValTok{1}\NormalTok{, }\DataTypeTok{add=}\NormalTok{T, }\DataTypeTok{xname=}\StringTok{"x"}\NormalTok{, }\DataTypeTok{col=}\StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+On voit qu'on arrive à \textbf{2 distribution équivalentes} avec les 2
+méthodes, donc c'est plutôt rassurant.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{meanS =}\StringTok{ }\KeywordTok{paste}\NormalTok{(}\StringTok{"Moy MCMC ="}\NormalTok{, }\KeywordTok{mean}\NormalTok{(vec_theta_MCMC), }
+              \StringTok{"| Moy bourrin ="}\NormalTok{, }\KeywordTok{mean}\NormalTok{(vec_theta_bourrin))}
+\NormalTok{varS =}\StringTok{ }\KeywordTok{paste}\NormalTok{(}\StringTok{"Variance MCMC ="}\NormalTok{, }\KeywordTok{var}\NormalTok{(vec_theta_MCMC), }
+              \StringTok{"| Variance bourrin ="}\NormalTok{, }\KeywordTok{var}\NormalTok{(vec_theta_bourrin))}
+\KeywordTok{print}\NormalTok{( }\KeywordTok{paste}\NormalTok{(meanS, varS, }\DataTypeTok{sep=}\StringTok{'}\CharTok{\textbackslash{}n}\StringTok{'}\NormalTok{) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Moy MCMC = 0.697155560690892 | Moy bourrin = 0.696518918373948\nVariance MCMC = 0.00206675812515492 | Variance bourrin = 0.00211156282288443"
+\end{verbatim}
+
+On a des moyennes (environ 0.7, comme prévu) et pareil pour les
+variances.
+
+\#\#3.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{quantile}\NormalTok{(vec_theta_MCMC, }\DataTypeTok{probs=}\KeywordTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\FloatTok{0.025}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        0%      2.5%        5%      7.5%       10%     12.5%       15% 
+## 0.5200049 0.6054485 0.6166496 0.6287193 0.6364913 0.6423590 0.6493504 
+##     17.5%       20%     22.5%       25%     27.5%       30%     32.5% 
+## 0.6547916 0.6592115 0.6645858 0.6679365 0.6716589 0.6743130 0.6781632 
+##       35%     37.5%       40%     42.5%       45%     47.5%       50% 
+## 0.6824082 0.6854724 0.6882335 0.6909130 0.6939936 0.6967800 0.6991869 
+##     52.5%       55%     57.5%       60%     62.5%       65%     67.5% 
+## 0.7013742 0.7038147 0.7071626 0.7102660 0.7140655 0.7167902 0.7205425 
+##       70%     72.5%       75%     77.5%       80%     82.5%       85% 
+## 0.7234596 0.7254500 0.7279672 0.7308988 0.7344365 0.7395517 0.7435309 
+##     87.5%       90%     92.5%       95%     97.5%      100% 
+## 0.7488417 0.7538204 0.7612629 0.7682636 0.7810664 0.8275840
+\end{verbatim}
+
+Je suis pas hyper sûr d'avoir bien compris ce que c'est qu'un intervalle
+de crédibilité. Néanmoins, vvoici une fonction qui devrait déterminer un
+intervalle de crédibilité centré sur la valeur de theta observée de 0.7.
+Elle prend en argument la valeur de theta observée et un vecteur de
+valeurs de theta, simulées par une approche bayesienne:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{credible_interval =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(theta_obs, vec_theta_bayes, pas)}
+\NormalTok{\{}
+\NormalTok{  flag =}\StringTok{ }\NormalTok{T}
+\NormalTok{  nb_val_theta =}\StringTok{ }\KeywordTok{length}\NormalTok{(vec_theta_bayes)}
+\NormalTok{  i =}\StringTok{ }\DecValTok{1}
+  
+  \ControlFlowTok{while}\NormalTok{ (flag)}
+\NormalTok{  \{}
+\NormalTok{    up_born =}\StringTok{ }\NormalTok{theta_obs }\OperatorTok{+}\StringTok{ }\NormalTok{i }\OperatorTok{*}\StringTok{ }\NormalTok{pas}
+\NormalTok{    down_born =}\StringTok{ }\NormalTok{theta_obs }\OperatorTok{-}\StringTok{ }\NormalTok{i }\OperatorTok{*}\StringTok{ }\NormalTok{pas}
+\NormalTok{    nb_inside =}\StringTok{ }\KeywordTok{sum}\NormalTok{((vec_theta_bayes }\OperatorTok{>}\StringTok{ }\NormalTok{down_born) }\OperatorTok{&}\StringTok{ }\NormalTok{(vec_theta_bayes }\OperatorTok{<}\StringTok{ }\NormalTok{up_born))}
+    
+    \ControlFlowTok{if}\NormalTok{ ( nb_inside}\OperatorTok{/}\NormalTok{nb_val_theta }\OperatorTok{>}\StringTok{ }\FloatTok{0.95}\NormalTok{ )}
+\NormalTok{      flag =}\StringTok{ }\NormalTok{F}
+    
+\NormalTok{    i =}\StringTok{ }\NormalTok{i }\OperatorTok{+}\StringTok{ }\DecValTok{1}
+\NormalTok{  \}}
+  
+  \KeywordTok{return}\NormalTok{ ( }\KeywordTok{c}\NormalTok{(down_born, up_born) )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Pour la 1ère méthode, avec un pas de 0.001, on arrive à l'intervalle de
+crédibilité suivant:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{credible_interval}\NormalTok{(}\FloatTok{0.7}\NormalTok{, vec_theta_MCMC, }\FloatTok{0.001}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.61 0.79
+\end{verbatim}
+
+Et pour la 2ème méthode, avec le même pas, on arrive à l'intervalle:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{credible_interval}\NormalTok{(}\FloatTok{0.7}\NormalTok{, vec_theta_bourrin, }\FloatTok{0.001}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.612 0.788
+\end{verbatim}
+
+L'intervalle de crédibilité étant un poil plus serré dans le cas de la
+méthode 1, on peut dire qu'elle est légèrement meilleure. Mais la
+différence est minime, les 2 méthodes se valent en termes de précision.
+En revanche, au niveau efficacité et temps de calcul, la 1ère méthode
+est clairement meilleure, puisque chaque tour de boucle génère une
+valeur de theta, contrairement à la 2ème, où beaucoup de valeurs sont
+calculées pour rien. =\textgreater{} La 2ème méthode n'est à proviligier
+que lorsqu'on est dans l'impossibilité de calculer la vraissemblance (ou
+de déterminer sa loi, comme on l'a fait ici)
+
+
+\end{document}

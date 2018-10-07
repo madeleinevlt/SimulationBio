@@ -1,0 +1,677 @@
+---
+title: "R Notebook"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+
+
+## Exercice 2 : ######
+
+La fonction à intégrer dans cette exercice est :
+\begin{equation*}
+g(x)=\frac{exp(x)-1}{exp(1) -1}
+\end{equation*}
+
+##2.1 Création des différentes fonctions:
+###2.1.0. Définition des fonctions communes:
+```{r message=FALSE}
+g_support = function(scal) { return( expm1(scal)/expm1(1) ) } ##exp()-1
+MSE = function(vect_res)
+{
+  nbRep = length(vect_res)
+  soluce = (exp(2)-3)/expm1(1)
+  return( sum( (vect_res-soluce)**2)/nbRep )
+}
+```
+
+
+###2.1.1 MC Noir/Blanc (NB):
+```{r message=FALSE}
+MC_NB = function(a, b, g_support, nb_points)
+{
+  maj = g_support(2) #Meilleur majorant: maj = g_support(2) 
+  x = runif(nb_points, a, b)
+  y = runif(nb_points, 0, maj)
+  
+  n_success = sum( y < g_support(x) )
+  return(maj * (b-a) * n_success/nb_points)  
+}
+```
+
+##Histogramme pour MC Noir/Blanc
+```{r}
+library(MASS)
+I <- (exp(2)-3)/(exp(1)-1)
+nrep=100000
+n=100
+res1=rep(NA,nrep)
+
+for (i in 1:nrep) {
+  res1[i]=MC_NB(0,2,g_support,n)
+}
+mse1=(sum(res1-I)**2/nrep)
+truehist(res1)
+mean(res1)
+var(res1)
+```
+
+
+###2.1.2 MC avec densité auxiliaire SIMPLE (uniforme)
+```{r message=FALSE}
+MC_simple = function(a, b, g_support, nb_points)
+{
+  x_unif = runif(nb_points, a, b)
+  return ( (b-a) * mean(g_support(x_unif)) )
+}
+```
+
+##Histogramme MC simple 
+```{r}
+
+nrep=100000
+n=100
+res2=rep(NA,nrep)
+
+for (i in 1:nrep) {
+  res2[i]=MC_simple(0,2,g_support,n)
+}
+mse2=(sum(res2-I)**2/nrep)
+truehist(res2)
+mean(res2)
+var(res2)
+```
+
+
+
+###2.1.3 MC avec densité auxiliaire en BETA:
+```{r message=FALSE}
+MC_beta = function(alpha, beta, k, nb_points, g_support)
+{ #k pour [0, k]
+  ech_beta = k * rbeta(nb_points, alpha, beta)
+  f_beta = function(scal) { return( dbeta(scal/k, alpha, beta) ) }
+  
+  return ( k * mean(g_support(ech_beta)/f_beta(ech_beta)) )
+}
+```
+
+
+##Histogramme MC Beta :
+```{r}
+
+nrep=100000
+n=100
+res3=rep(NA,nrep)
+
+for (i in 1:nrep) {
+  res3[i]=MC_beta(2,1,2 ,n,g_support)
+}
+mse3=(sum(res3-I)**2/nrep)
+truehist(res3)
+mean(res3)
+var(res3)
+```
+
+
+##2.2 Comparaisons et optimisations:
+###2.2.1 Comparaison des 3 méthodes:
+```{r message=FALSE}
+nbRep = 10000
+nb_points = 200
+```
+
+On commence par créer les vecteurs associés à chacune des 4 méthodes (NB, SIMPLE,
+BETA(alpha=2,beta=1) et BETA(alpha=1,beta=2)):
+```{r }
+vect_res_NB = rep(0, nbRep)
+vect_res_SIMPLE = rep(0, nbRep)
+vect_res_BETA_2_1 = rep(0, nbRep)
+vect_res_BETA_1_2 = rep(0, nbRep)
+
+for (i in 1:nbRep)
+{
+  vect_res_NB[i] = MC_NB(a=0, b=2, g_support, nb_points)
+  vect_res_SIMPLE[i] = MC_simple(a=0, b=2, g_support, nb_points)
+  vect_res_BETA_2_1[i] = MC_beta(alpha=2, beta=1, k=2, nb_points, g_support)
+  vect_res_BETA_1_2[i] = MC_beta(alpha=1, beta=2, k=2, nb_points, g_support)
+}
+```
+```{r echo=T}
+print( paste( "MOY_NB =", mean(vect_res_NB), "| MSE_NB =", MSE(vect_res_NB) ) )
+print( paste( "MOY_SIMPLE =", mean(vect_res_SIMPLE), 
+              "| MSE_SIMPLE =", MSE(vect_res_SIMPLE) ) )
+print( paste( "MOY_BETA_2_1 =", mean(vect_res_BETA_2_1), 
+              "| MSE_BETA_2_1 =", MSE(vect_res_BETA_2_1) ) )
+print(paste("MOY_BETA_1_2 =", mean(vect_res_BETA_1_2), 
+            "| MSE_BETA_1_2 =", MSE(vect_res_BETA_1_2)  ) )
+```
+On voit bien ici, que même si les valeurs de I calculées en faisant la moyenne
+pour 100000 répétitions sont équivalentes, les précisions sur le résultat, ou
+autrement dit les fluctuations d'échantillonnage changent (quantifiées par le
+MSE). <br>
+On voit donc que ça va en diminuant du NB au BETA_2_1, ce qui indique que 
+SIMPLE est meilleure que NB d'un facteur 3, mais moins bonne que BETA_2_1 d'un
+facteur 10
+BETA_1_2 est à part, avec le plus mauvais MSE des 4 méthodes.
+
+Il est possible d'expliquer **qualitativement** les résultats des 3 méthodes MC
+par "échantillonnage", en les classant par MSE et en affichant leurs densités de
+probabilité:
+
+```{r }
+graphics.off()
+par(mfrow=c(1, 3))
+
+curve(expm1(x)/expm1(1), from=0, to=2, xname="x", 
+          main="alpha=1 beta=2",
+          xlab="alpha", ylab="beta")
+curve(dbeta(x/2, 1, 2)/2, from=0, to=2, xname="x", add=T)
+
+curve(expm1(x)/expm1(1), from=0, to=2, xname="x", 
+          main="UNIFORME",
+          xlab="alpha", ylab="beta")
+abline(a=1/2, b=0)
+
+curve(expm1(x)/expm1(1), from=0, to=2, xname="x", 
+          main="alpha=2 beta=1",
+          xlab="alpha", ylab="beta")
+curve(dbeta(x/2, 2, 1)/2, from=0, to=2, xname="x", add=T)
+```
+On a vu précédemment que sur ce type de méthodes par "importance variable" des
+valeurs, c'est la densité de probabilité de la variable auxiliaire qui détermine
+l'importance accordée à chaque valeur de l'intervalle support.
+De ce fait, plus la densité auxiliaire "mîme" fidèlement la densité de g 
+(fonction de référence), plus on accorde une grande importance aux valeurs de
+g(x) les plus grandes, celles qui contribuent le plus à l'aire, meilleure
+sera l'approximation. 
+Ainsi pour BETA_1_2, la densité auxiliaire s'oppose à la tendance de la
+densité de référence, accordant donc plus d'importance aux valeurs inférieures à
+1, qui sont pourtant celles qui contribuent le moins à l'aire, puis que g est
+croissante sur [0, 2]. D'où son mauvais MSE.
+De même, avec sa densité de probabilité plate, la variable auxiliaire donne 
+une importance équivalente à toutes les valeurs de l'intervalle, d'où son
+MSE intermédiaire
+C'est BETA_2_1 qui "épouse" le mieux g, d'où son MSE meilleur que les 2 autres.
+
+
+##2.2.2 Determination du meilleur couple (alpha ; beta):
+Maintenant qu'on a vu que la simple inversion des valeurs de alpha et bêta dans
+la variable auxiliaire suffit à augmenter grandement le MSE, on va chercher à
+déterminer les valeurs optimales de alpha et bêta, celles qui maximisent le
+MSE
+
+On commence par créer une fonction de calcul du MSE adpatée aux fonctions de 
+type Bêta:
+```{r message=FALSE}
+MSE_BETA = function(vect_param)
+{
+  my_alpha = vect_param[1] ; my_beta = vect_param[2]
+  nbRep = 10000
+  g_support = function(scal) { return( expm1(scal)/expm1(1) ) }
+  
+  vect_res = rep(0, nbRep)
+  
+  for (rep in 1:nbRep)
+  {
+    vect_res[rep] = MC_beta(alpha=my_alpha, beta=my_beta, 
+                            k=2, 200, g_support)  
+  }
+  soluce = (exp(2)-3)/expm1(1)
+  return( sum( (vect_res-soluce)**2)/nbRep )
+}
+```
+
+Ensuite, on procède à un 1er quadrillage visuel grossier, pour rétrécir l'espace
+dans lequel on recherche les alpha et bêta optimaux:
+```{r }
+pas = 1
+range_alpha = seq(pas, 5, by=pas)
+range_beta = seq(pas, 3, by=pas)
+long_alpha = length(range_alpha)
+long_beta = length(range_beta)
+
+graphics.off()
+par(mfrow = c(long_alpha, long_beta), mar = rep(2, 4))
+for (my_alpha in range_alpha)
+{
+  for (my_beta in range_beta)
+  {
+    curve(expm1(x)/expm1(1), from=0, to=2, xname="x", 
+          main=paste("alpha=", my_alpha, "beta=", my_beta),
+          xlab="alpha", ylab="beta")
+    curve(dbeta(x/2, my_alpha, my_beta)/2, from=0, to=2, xname="x", add=T)
+  }
+}
+```
+
+En allant voir les formules compliquées sur la loi Bêta sur Wikipédia, on sait
+déjà que alpha et bêta doit tous les 2 être **strictement** positifs.
+Ensuite, on peut voir que pour bêta >= 2, les densités auxiliaires perdent en
+proximité avec la densité de référence.
+Donc on fera varier bêta sur ]0 ; 2[
+Pour alpha, c'est un peu plus compliqué, ça l'air de mîmer g de mieux en mieux,
+au fur et à mesure que alpha augmente.
+
+On va mainteant essayer de déterminer les valeurs numériques optimales de alpha
+et bêta, en essayant de trouver celles pour lesquelles le MSE est minimal.
+Pour ça, on utilise une méthode de "grille", en créant un tableau (matrice)
+contenant le MSE associé à chaque couple (alpha ; bêta):
+```{r main_loop }
+system.time(
+{  
+  pas_beta = 0.5
+  pas_alpha = 1
+  range_alpha = seq(pas_alpha, 5, by=pas_alpha)
+  range_beta = seq(pas_beta, 2-pas_beta, by=pas_beta)
+  
+  mat_res = matrix(data=0, nrow=long_alpha, ncol=long_beta)
+  i = 1
+  
+  for (my_alpha in range_alpha)
+  {
+    j = 1
+    for (my_beta in range_beta)
+    {
+      vect_param = c(my_alpha, my_beta)
+      mat_res[i, j] = MSE_BETA(vect_param)
+      j = j + 1
+    }
+    i = i + 1
+  }
+})
+```
+
+
+```{r message=FALSE}
+#library(rgl) #mininstall -c r r-rgl
+#x = scan()
+
+#persp3d(range_alpha, range_beta, 1/mat_res, xlab="alpha", ylab="beta")
+#persp(range_alpha, range_beta, 1/mat_res,  xlab="alpha", ylab="beta",
+      #ticktype="detailed")
+```
+
+En plottant l'inverse des MSE plutôt que les MSE directement en Z, il semble
+qu'on amplifie les écarts. On voit donc clairement apparaître sur le plot 3D un
+"pic", de coordonnées (alpha=3 ; bêta=1), qui semblent être les valeurs 
+optimales des paramètres alpha et bêta
+
+REMARQUE: On pourrait regarder les valeurs prises autour de 1 et 3, pour savoir
+si c'est exactement ces valeurs ou plutôt des trucs à virgules
+
+
+EN UTILISANT OPTIM:
+```{r message=FALSE}
+#res_final = optim(c(2, 1), fn=MSE_BETA, method=c("BFGS"))
+```
+
+
+#EXERCICE 3:
+##1. Méthode d'inversion de la fonction de répartition
+```{r message=FALSE}
+my_rpois_one = function (lambda)
+{
+  one_x_unif = runif(1)
+  compt = 0
+  flag = T
+  
+  while (flag)
+  {
+    if ( ppois(compt, lambda) < one_x_unif )
+    {
+      compt = compt + 1 #On incrémente le compteur
+      
+    } else { flag = F }
+  } 
+  
+  return (compt)    
+}
+
+my_rpois = function (n, lambda)
+{
+  return( replicate(n, my_rpois_one(lambda)) )
+}
+```
+
+```{r}
+nbPoints = 10000
+lambda = 10
+nb_tires = my_rpois(nbPoints, lambda)
+
+plot( table(nb_tires)/nbPoints, xlab="n", ylab="proba")
+title(main="Histogramme des fréq des entiers générés",
+      sub="(en rouge, la valeur attendue)", outer=F)
+
+x_vect = 0:max(nb_tires)
+y_vect = dpois( x_vect, lambda )
+points(x_vect, y_vect, col="red")
+```
+
+
+##2. Simulation d'une variable discrète quelconque
+```{r message=FALSE}
+my_rdiscret_one = function()
+{
+  support_discret = c(-3, 1.3, 7, 15.2)
+  f_rep_discret = cumsum( c(0.1, 0.4, 0.3, 0.2) )
+  one_x_unif = runif(1)
+  
+  for ( i in 1:length(support_discret) )
+  {
+    if (one_x_unif < f_rep_discret[i]) { return (support_discret[i]) }
+  }
+}
+
+
+my_rdiscret = function (n)
+{
+  return( replicate(n, my_rdiscret_one()) )
+}
+```
+
+
+```{r}
+nbPoints = 10000
+lambda = 10
+nb_tires = my_rdiscret(nbPoints)
+png("rdiscret")
+plot( table(nb_tires)/nbPoints, xlab="Fréquence", ylab="Probabilité")
+title(main="",
+      sub="")
+
+x_vect = c(-3, 1.3, 7, 15.2)
+y_vect = c(0.1, 0.4, 0.3, 0.2)
+points(x_vect, y_vect, col="red")
+dev.off()
+```
+
+
+##3. Méthode de transformation
+```{r message=FALSE}
+my_dlaplace = function(scal) { return ( exp(-abs(scal))/2 ) }
+
+my_plaplace = function(scal)
+{
+  if (scal > 0) { return ( 1-exp(-scal)/2 ) }
+  return ( exp(scal)/2 )
+}
+
+my_qlaplace = function()
+{
+  proba = runif(1)
+  if (proba < 0.5) { return ( log(2*proba) ) }
+  return( -log(2*(1-proba)) )
+}
+
+my_rlaplace = function(n)
+{
+  return( replicate(n, my_qlaplace()) )
+}
+
+```
+
+```{r}
+nbPoints = 10000
+png("laplace")
+truehist(my_rlaplace(nbPoints), xlim=c(-10, 10), xlab="Fréquence", ylab="Probabilité")
+title(main="",
+      sub="")
+
+x_vect = seq(-10, 10, len=100)
+lines(x_vect, my_dlaplace(x_vect), col="red" )
+dev.off()
+```
+
+
+##4. Méthode de rejet
+1) On détermine l'expression analytique de h:
+   h(x) = 2 \* exp(abs(x) - x**2/2) /2
+
+2) On dérive h et on cherche les valeurs de x qui annulent h'(x)
+  => On trouve -1 si x<0 et 1 sinon
+
+3) On détermine les valeurs de h(-1) et h(1), mais comme on a une valeur 
+  absolue et un carré: h(1) = h(-1)
+  
+  h(1) = 2 * exp(1 - 1/2) /sqrt(2pi) = sqrt(2/pi) \* exp(1/2)
+  
+  h(1) = m = sqrt( 2*exp(1)/pi )    
+
+```{r}
+nb_points = 10000
+maj = sqrt( 2*exp(1)/pi )
+
+my_rnorm = function(nb_points, maj)
+{
+  vect_x_i = my_rlaplace(nb_points)
+  vect_u_i = runif(nb_points)
+  h_i = dnorm(vect_x_i) / my_dlaplace(vect_x_i)
+  filtre <- which( vect_u_i <= h_i/maj )
+  sum(filtre)
+  return ( vect_x_i[filtre] )
+}
+
+
+vect_x_normaux = my_rnorm(nb_points, maj)
+truehist(vect_x_normaux)
+x_vect = seq(-4, 4, len=100)
+lines(x_vect, dnorm(x_vect), col="red" )
+```
+
+```{r}
+#Comparaison des taux de rejets prévu et observé:
+print( 1 - length(vect_x_normaux)/nb_points)
+print( 1 - 1/maj )
+```
+
+
+##5. Algorithme MCMC:
+```{r message=FALSE}
+my_dprop = function(scal, delta) #Ca génère la nouvelle position
+{
+  start = scal - delta
+  end = scal + delta
+  
+  return ( runif(1, start, end) )
+}
+
+my_rprop = function (n) { return ( replicate(n, dprop()) ) }
+
+my_dtarget = function (scal)
+{
+  return ( 0.2*dnorm(scal, -3, 2) + 0.5*dnorm(scal) + 0.3*dnorm(scal, 5, 3) )
+}
+
+my_rtarget = function (nb_steps)
+{
+  x_i = 10 #On s'en fout, point de départ
+  vect_x_i = c(x_i, rep(0, 100))
+  delta = 2
+  
+  for( i in 2:(nb_steps+1) )
+  {
+    y_i = my_dprop(x_i, delta)
+    proba_decision = min( 1, my_dtarget(y_i)/my_dtarget(x_i) )
+    u_decision = runif(1)
+    
+    if (u_decision < proba_decision) {  x_i = y_i }
+    vect_x_i[i] = x_i
+  }
+  
+  return ( vect_x_i )
+}
+```
+
+```{r}
+nb_steps = 10000
+vect_target = my_rtarget(nb_steps)
+
+truehist( vect_target )
+
+x_vect = seq(-10, 15, len=nb_steps)
+lines( x_vect, my_dtarget(x_vect), col="red" )
+```
+
+#EXERCICE 4:
+##1. MCMC Bayesien
+```{r message=FALSE}
+my_rbeta = function(theta) { return ( rbeta(1, 1/(1-theta), 2) ) }
+
+my_dbeta_condition = function (theta, theta_prim)
+{
+  return ( dbeta(theta, 1/(1-theta_prim), 2) )
+}
+
+calc_proba_decision = function (theta, theta_prim)
+{
+  vraiss_theta = dbinom(70, 100, theta)
+  vraiss_theta_prim = dbinom(70, 100, theta_prim)
+  
+  numerat = vraiss_theta_prim * my_dbeta_condition(theta, theta_prim)
+  denominat = vraiss_theta * my_dbeta_condition(theta_prim, theta)
+  
+  return (numerat/denominat)
+}
+
+#Comme theta est sur [0;1], pi(theta) = 1 = pi(theta_prim) ??
+
+MCMC_beta_mutation = function (nb_steps)
+{
+  theta = runif(1)
+  vec_theta = c( theta, rep(0, nb_steps) )
+  size_ech = 100
+  
+  for (i in 2:(nb_steps+1))
+  {
+    theta_prim = min( 1, my_rbeta(theta) )
+    proba_decision = min( 1, calc_proba_decision(theta, theta_prim) )
+
+    if (runif(1) < proba_decision) { theta = theta_prim }
+    vec_theta[i] = theta
+  }
+  
+  return (vec_theta)
+}
+```
+
+
+##2. Simulation de la loi conjointe
+```{r message=FALSE}
+simul_conjointe = function (nb_points, freq_mut_obs)
+{
+  vec_theta = rep(0, nb_points)
+  compt_pts = 1
+  
+  while(compt_pts < nb_points)
+  {
+    theta = runif(1)
+    size_ech = 100
+    nb_mut_simul = rbinom(1, size_ech, theta)
+    
+    if ( nb_mut_simul == (freq_mut_obs*size_ech) )
+    {
+      vec_theta[compt_pts] = theta
+      compt_pts = compt_pts + 1
+    }
+  }
+  
+  return (vec_theta[1:(compt_pts)])
+}
+
+simul_conj_one = function (freq_mut_obs)
+{
+  #na.omit(replicate(1000000, simul_conj_one)), met 3 secondes de plus que
+  #l'autre
+  
+  theta = runif(1)
+  size_ech = 100
+  
+  if ( rbinom(1, size_ech, theta) == (size_ech*freq_mut_obs) )
+    return (theta)
+  return(NA)
+}
+```
+
+```{r message=FALSE}
+vec_theta_MCMC = MCMC_beta_mutation(10000)
+vec_theta_bourrin = simul_conjointe(10000, 0.7)
+```
+```{r message=FALSE}
+#Par résolution analytique: pi(theta/x) --> loi bêta (x + 1, n − x + 1)
+
+graphics.off()
+par( mfrow=c(1, 2) )
+truehist(vec_theta_MCMC, xlim=c(0, 1))
+curve(dbeta(x, 70+1, 30+1), from=0, to=1, add=T, xname="x", col="red")
+truehist(vec_theta_bourrin, xlim=c(0, 1))
+curve(dbeta(x, 70+1, 30+1), from=0, to=1, add=T, xname="x", col="red")
+```
+
+On voit qu'on arrive à **2 distribution équivalentes** avec les 2 méthodes, donc
+c'est plutôt rassurant. 
+
+```{r message=FALSE}
+meanS = paste("Moy MCMC =", mean(vec_theta_MCMC), 
+              "| Moy bourrin =", mean(vec_theta_bourrin))
+varS = paste("Variance MCMC =", var(vec_theta_MCMC), 
+              "| Variance bourrin =", var(vec_theta_bourrin))
+print( paste(meanS, varS, sep='\n') )
+```
+On a des moyennes (environ 0.7, comme prévu) et pareil pour les variances.
+
+
+
+
+##3.
+
+```{r message=FALSE}
+quantile(vec_theta_MCMC, probs=seq(0, 1, 0.025))
+```
+Je suis pas hyper sûr d'avoir bien compris ce que c'est qu'un intervalle de 
+crédibilité. Néanmoins, vvoici une fonction qui devrait déterminer un intervalle
+de crédibilité centré sur la valeur de theta observée de 0.7. <br>
+Elle prend en argument la valeur de theta observée et un vecteur de valeurs
+de theta, simulées par une approche bayesienne:
+```{r message=FALSE}
+credible_interval = function(theta_obs, vec_theta_bayes, pas)
+{
+  flag = T
+  nb_val_theta = length(vec_theta_bayes)
+  i = 1
+  
+  while (flag)
+  {
+    up_born = theta_obs + i * pas
+    down_born = theta_obs - i * pas
+    nb_inside = sum((vec_theta_bayes > down_born) & (vec_theta_bayes < up_born))
+    
+    if ( nb_inside/nb_val_theta > 0.95 )
+      flag = F
+    
+    i = i + 1
+  }
+  
+  return ( c(down_born, up_born) )
+}
+```
+Pour la 1ère méthode, avec un pas de 0.001, on arrive à l'intervalle de 
+crédibilité suivant:
+```{r message=FALSE}
+credible_interval(0.7, vec_theta_MCMC, 0.001)
+```
+
+Et pour la 2ème méthode, avec le même pas, on arrive à l'intervalle:
+```{r message=FALSE}
+credible_interval(0.7, vec_theta_bourrin, 0.001)
+```
+
+L'intervalle de crédibilité étant un poil plus serré dans le cas de la méthode 1,
+on peut dire qu'elle est légèrement meilleure. <br>
+Mais la différence est minime, les 2 méthodes se valent en termes de précision.
+En revanche, au niveau efficacité et temps de calcul, la 1ère méthode est 
+clairement meilleure, puisque chaque tour de boucle génère une valeur de theta,
+contrairement à la 2ème, où beaucoup de valeurs sont calculées pour rien.
+=> La 2ème méthode n'est à proviligier que lorsqu'on est dans l'impossibilité
+de calculer la vraissemblance (ou de déterminer sa loi, comme on l'a fait ici)
