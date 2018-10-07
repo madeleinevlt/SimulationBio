@@ -73,20 +73,18 @@ n=100
 alpha=1
 beta=1
 msemax=1
-for (j in seq(1,20,0.5)) {
-  if (j<10) {
+for (j in seq(1,10,0.01)) {
+  if (j<5) {
     alpha=j
   }
-  if (j>10) {
+  if (j>5) {
     alpha=1
-    beta=j
+    beta=j-5 +1
   }
   res4=rep(NA,nrep)
   for (i in 1:nrep) {
     res4[i]=MC_Beta(n,alpha,beta)
   }
-  print(mean(res4))
-  print(var(res4))
   mse4=(sum(res4-I)**2/nrep)
   cat(alpha,beta,mse4)
   print("separator")
@@ -94,7 +92,7 @@ for (j in seq(1,20,0.5)) {
     msemax=mse4
     alpha_max=alpha
     beta_max=beta
-  }
+    }
 }
 print(msemax)
 print(alpha_max)
@@ -102,7 +100,7 @@ print(beta_max)
 
 res4=rep(NA,nrep)
 for (i in 1:nrep) {
-  res4[i]=MC_Beta(n,2,1)
+  res4[i]=MC_Beta(n,1.5,1)
 }
 
 mse4=(sum(res4-I)**2/nrep)
